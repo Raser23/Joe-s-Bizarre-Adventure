@@ -4,14 +4,39 @@ using UnityEngine;
 
 public class LegTrigger : MonoBehaviour {
 
-    public bool triggered;
+    public bool triggered
+    {
+        get { return ins.Count > 0; }
+    }
+
+    public List<Collider> ins;
+
+    void Start(){
+        ins = new List<Collider>();
+    }
 
 	void OnTriggerEnter(Collider other)
 	{
-        triggered = true;
+		if (other.tag == "Floor")
+		{
+            ins.Add(other);
+		}
+           
+
+	}
+	void OnTriggerStay(Collider other)
+	{
+		if (other.tag == "Floor")
+		{
+            
+		}
 	}
 	void OnTriggerExit(Collider other)
 	{
-        triggered = false;
+		if (other.tag == "Floor")
+		{
+            ins.Remove(other);
+		}
+
 	}
 }

@@ -29,8 +29,7 @@ public class PlayerController : MonoBehaviour {
         info = gameObject.GetComponent<PlayerInfo>();
         Movement = Vector3.zero;
 
-        jumpStartVelocity = Mathf.Sqrt(2* Gravity * info.jumpHeight);
-        //s = v*t - g*tt/2 v = (s + gtt/2)/t
+        jumpStartVelocity = Mathf.Sqrt(2 * Gravity * info.jumpHeight);
 	}
 
     float passedTime = 0F;
@@ -44,7 +43,7 @@ public class PlayerController : MonoBehaviour {
         isgrounded = trigger.triggered;
 
         if(!isgrounded || Movement.y > 0){
-            Movement.y -= Gravity;
+            Movement.y -= Gravity * Time.fixedDeltaTime;
         }else{
             Movement.y = 0;
         }
@@ -63,10 +62,11 @@ public class PlayerController : MonoBehaviour {
 
 		
         Movement.Set(input.forward, Movement.y, input.right);
-        controller.Move(transform.up * Movement.y * Time.fixedDeltaTime );
-        controller.Move(transform.forward * input.forward * info.walkSpeed * Time.fixedDeltaTime);
-		controller.Move(transform.right * input.right * info.walkSpeed * Time.fixedDeltaTime);
-
+        Vector3 movement = transform.forward * input.forward * info.walkSpeed + 
+                                    transform.right * input.right * info.walkSpeed+transform.up * Movement.y;
+        movement *= Time.fixedDeltaTime;
+        controller.Move( movement);
+		
 
 	}
 	void OnCollisionEnter(Collision theCollision)
