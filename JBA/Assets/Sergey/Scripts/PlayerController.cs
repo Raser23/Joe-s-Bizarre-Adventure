@@ -45,7 +45,9 @@ public class PlayerController : MonoBehaviour {
         controller.Move(Vector3.zero);
         isgrounded = trigger.triggered;
 
-        if(!isgrounded || Movement.y > 0){
+
+
+		if(!isgrounded || Movement.y > 0){
             Movement.y -= Gravity * Time.fixedDeltaTime;
         }else{
             Movement.y = 0;
@@ -71,6 +73,8 @@ public class PlayerController : MonoBehaviour {
         Vector3 mov = transform.forward * input.forward * info.walkSpeed +
                                transform.right * input.right * info.walkSpeed;
         Vector3 mov1 = cast.Image(mov).normalized * mov.magnitude;
+        //print(Movement.y);
+
 
         Vector3 movement =  mov1 +  transform.up * Movement.y;
         movement *= Time.fixedDeltaTime;

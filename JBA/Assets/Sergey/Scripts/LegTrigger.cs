@@ -17,7 +17,7 @@ public class LegTrigger : MonoBehaviour {
 
 	void OnTriggerEnter(Collider other)
 	{
-		//if (other.tag == "Floor")
+		if (other.tag != "Player")
 		//{
             ins.Add(other);
 		//}
@@ -33,7 +33,7 @@ public class LegTrigger : MonoBehaviour {
 	}
 	void OnTriggerExit(Collider other)
 	{
-		//if (other.tag == "Floor")
+		if (other.tag != "Player")
 		//{
             ins.Remove(other);
 		//}
