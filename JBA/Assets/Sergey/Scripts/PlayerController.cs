@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(LevelAnaliser))]
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(PlayerInfo))]
 public class PlayerController : MonoBehaviour {
@@ -20,6 +21,7 @@ public class PlayerController : MonoBehaviour {
 
     private CharacterController controller;
     private PlayerInfo info;
+    private LevelAnaliser analiser;
     public float jumpStartVelocity;
 
     Vector3 Movement;
@@ -27,6 +29,7 @@ public class PlayerController : MonoBehaviour {
 	void Start () {
         controller = gameObject.GetComponent<CharacterController>();
         info = gameObject.GetComponent<PlayerInfo>();
+        analiser = gameObject.GetComponent<LevelAnaliser>(); 
         Movement = Vector3.zero;
 
         jumpStartVelocity = Mathf.Sqrt(2 * Gravity * info.jumpHeight);
@@ -62,8 +65,14 @@ public class PlayerController : MonoBehaviour {
 
 		
         Movement.Set(input.forward, Movement.y, input.right);
-        Vector3 movement = transform.forward * input.forward * info.walkSpeed + 
-                                    transform.right * input.right * info.walkSpeed+transform.up * Movement.y;
+
+        Plane cast = analiser.Cast();
+
+        Vector3 mov = transform.forward * input.forward * info.walkSpeed +
+                               transform.right * input.right * info.walkSpeed;
+        Vector3 mov1 = cast.Image(mov).normalized * mov.magnitude;
+
+        Vector3 movement =  mov1 +  transform.up * Movement.y;
         movement *= Time.fixedDeltaTime;
         controller.Move( movement);
 		
