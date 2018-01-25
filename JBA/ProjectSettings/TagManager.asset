@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Fire
   - Floor
+  - Marker
   layers:
   - Default
   - TransparentFX
