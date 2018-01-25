@@ -5,13 +5,15 @@ using System;
 
 public class Generation : MonoBehaviour
 {
+    enum Room_type { Regular, Golden, Boss, Big };
     public struct Room
     {
         public Vector2 position;
         public GameObject obj;
+        public string type;
     }
     public GameObject example;
-    public int number_of_rooms = 100;
+    public int number_of_rooms = 50;
     public List<Vector2> possible_points = new List<Vector2>();
     public List<Vector2> points = new List<Vector2>();
     public List<Room> rooms = new List<Room>();
@@ -19,12 +21,13 @@ public class Generation : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        
         trash.x = 0;
         trash.y = 0;
         possible_points.Add(trash);
         int sum_of_weight = 0;
         System.Random rnd = new System.Random();
-
+        int golden = rnd.Next(2, number_of_rooms - 1);
         sum_of_weight = Weight(Vector2.zero);
         while (number_of_rooms > 0)
         {
@@ -42,53 +45,40 @@ public class Generation : MonoBehaviour
                 counter++;
                 a -= Weight(possible_points[counter]);
             }
-            points.Add(possible_points[counter]);
+
             trash = possible_points[counter];
-            GameObject instance = Instantiate(Resources.Load("Room_template", typeof(GameObject))) as GameObject;
-            instance.transform.position = new Vector3(trash.x * 20, 100, trash.y * 20);
+            points.Add(trash);
+
             Room trash_room;
+            trash_room.type = "Regular";
+            GameObject instance = this.gameObject; //crutch
+            if (number_of_rooms == golden)
+            {
+                trash_room.type = "Golden";
+                instance = Instantiate(Resources.Load("Room_Golden_template", typeof(GameObject))) as GameObject;
+            }
+            if (number_of_rooms == 1)
+            {
+                trash_room.type = "Boss";
+                instance = Instantiate(Resources.Load("Room_Boss_template", typeof(GameObject))) as GameObject;
+            }
+            if (trash_room.type == "Regular")
+            {
+                instance = Instantiate(Resources.Load("Room_template", typeof(GameObject))) as GameObject;
+            }            
+            instance.transform.position = new Vector3(trash.x * 20, 100, trash.y * 20);
             trash_room.position = trash;
             trash_room.obj = instance;
+
+
             rooms.Add(trash_room);
-            /*         GameObject instance = Instantiate(Resources.Load("Room_template", typeof(GameObject))) as GameObject;
-                     instance.transform.position = new Vector3(trash.x * 20, 100, trash.y * 20);
-                     foreach (Transform child in instance.transform)
-                     {
-                         if (child.tag == "Marker")
-                         {
-                             Vector2 vec;
-                             switch (child.name)
-                             {
-                                 case "Wall_Position_Z+":
-                                     vec.x = 0;
-                                     vec.z = 1;
-                                 if (points.IndexOf(bt) == -1)
-                                     break;
-                                 case "Wall_Position_Z-":
-
-                                     break;
-                                 case "Wall_Position_Z-":
-
-                                     break;
-                                 case "Wall_Position_Z-":
-
-                                     break;
-                                 default:
-                                     break;
-                             }
-                             GameObject instance_wall = Instantiate(Resources.Load("Wall_template", typeof(GameObject))) as GameObject;
-                             instance_wall.transform.position = child.transform.position;
-                             instance_wall.transform.rotation = child.transform.rotation;
-                             instance_wall.transform.parent = child;
-                         }
-                     }*/
 
             List<Vector2> n = new List<Vector2>() { new Vector2(1, 0), new Vector2(0, 1), new Vector2(-1, 0), new Vector2(0, -1) };
 
             foreach (Vector2 vec in n)
             {
                 Vector2 bt = trash + vec;
-                if ((possible_points.IndexOf(bt) == -1) && (points.IndexOf(bt) == -1))
+                if ((possible_points.IndexOf(bt) == -1) && (points.IndexOf(bt) == -1) && (trash_room.type == "Regular"))
                 {
                     int near = 0;
                     foreach (Vector2 vec1 in n)
@@ -123,12 +113,6 @@ public class Generation : MonoBehaviour
 
     }
 
- /*   void Room_creation(Vector2 trash)
-    {
-        GameObject instance = Instantiate(Resources.Load("Room_template", typeof(GameObject))) as GameObject;
-        instance.transform.position = new Vector3(trash.x * 20, 100, trash.y * 20);
-    }
-*/
     void Wall_generation()
     {
         foreach (Room room in rooms)
