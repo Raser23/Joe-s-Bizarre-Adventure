@@ -117,6 +117,20 @@ public class Generation : MonoBehaviour
     {
         foreach (Room room in rooms)
         {
+            string rt = "";
+            switch (room.type)
+            {
+                case "Regular":
+                    break;
+                case "Golden":
+                    rt = "_Golden";
+                    break;
+                case "Boss":
+                    rt = "_Boss";
+                    break;
+                default:
+                    break;
+            }
             foreach (Transform child in room.obj.transform)
             if (child.tag == "Marker")
             {
@@ -129,11 +143,11 @@ public class Generation : MonoBehaviour
                         vec.y = 1;
                         if (points.IndexOf(room.position + vec) == -1)
                         {
-                            instance_wall = Instantiate(Resources.Load("Wall_template", typeof(GameObject))) as GameObject;
+                            instance_wall = Instantiate(Resources.Load("Wall" + rt + "_template", typeof(GameObject))) as GameObject;
                         }
                         else
                         {
-                            instance_wall = Instantiate(Resources.Load("Wall_Door_template", typeof(GameObject))) as GameObject;
+                            instance_wall = Instantiate(Resources.Load("Wall_Door" + rt + "_template", typeof(GameObject))) as GameObject;
                         }
                         instance_wall.transform.position = child.transform.position;
                         instance_wall.transform.rotation = child.transform.rotation;
@@ -144,11 +158,11 @@ public class Generation : MonoBehaviour
                         vec.y = -1;
                         if (points.IndexOf(room.position + vec) == -1)
                         {
-                            instance_wall = Instantiate(Resources.Load("Wall_template", typeof(GameObject))) as GameObject;
+                            instance_wall = Instantiate(Resources.Load("Wall" + rt + "_template", typeof(GameObject))) as GameObject;
                         }
                         else
                         {
-                            instance_wall = Instantiate(Resources.Load("Wall_Door_template", typeof(GameObject))) as GameObject;
+                            instance_wall = Instantiate(Resources.Load("Wall_Door" + rt + "_template", typeof(GameObject))) as GameObject;
                         }
                         instance_wall.transform.position = child.transform.position;
                         instance_wall.transform.rotation = child.transform.rotation;
@@ -159,11 +173,11 @@ public class Generation : MonoBehaviour
                         vec.y = 0;
                         if (points.IndexOf(room.position + vec) == -1)
                         {
-                            instance_wall = Instantiate(Resources.Load("Wall_template", typeof(GameObject))) as GameObject;
+                            instance_wall = Instantiate(Resources.Load("Wall" + rt + "_template", typeof(GameObject))) as GameObject;
                         }
                         else
                         {
-                            instance_wall = Instantiate(Resources.Load("Wall_Door_template", typeof(GameObject))) as GameObject;
+                            instance_wall = Instantiate(Resources.Load("Wall_Door" + rt + "_template", typeof(GameObject))) as GameObject;
                         }
                         instance_wall.transform.position = child.transform.position;
                         instance_wall.transform.rotation = child.transform.rotation;
@@ -174,11 +188,11 @@ public class Generation : MonoBehaviour
                         vec.y = 0;
                         if (points.IndexOf(room.position + vec) == -1)
                         {
-                            instance_wall = Instantiate(Resources.Load("Wall_template", typeof(GameObject))) as GameObject;
+                            instance_wall = Instantiate(Resources.Load("Wall" + rt + "_template", typeof(GameObject))) as GameObject;
                         }
                         else
                         {
-                            instance_wall = Instantiate(Resources.Load("Wall_Door_template", typeof(GameObject))) as GameObject;
+                            instance_wall = Instantiate(Resources.Load("Wall_Door" + rt + "_template", typeof(GameObject))) as GameObject;
                         }
                         instance_wall.transform.position = child.transform.position;
                         instance_wall.transform.rotation = child.transform.rotation;
