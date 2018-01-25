@@ -38,7 +38,7 @@ public class PlayerController : MonoBehaviour {
         Movement = Vector3.zero;
         m_Jumping = false;
 
-        //jumpStartVelocity = Mathf.Sqrt(2 * Gravity * info.jumpHeight);
+        jumpStartVelocity = Mathf.Sqrt(2 * Gravity*Physics.gravity.magnitude * info.jumpHeight);
 	}
 
     float passedTime = 0F;
