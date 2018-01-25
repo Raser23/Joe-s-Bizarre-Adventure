@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(LevelAnaliser))]
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(PlayerInfo))]
 public class PlayerController : MonoBehaviour {
@@ -18,11 +17,17 @@ public class PlayerController : MonoBehaviour {
     float rotationX = 0F;
 
     public bool isgrounded;
-
+    [SerializeField] private float m_StickToGroundForce;
     private CharacterController controller;
     private PlayerInfo info;
     private LevelAnaliser analiser;
+    private bool m_Jump;
+    private bool m_Jumping;
+    private bool m_PreviouslyGrounded;
+
     public float jumpStartVelocity;
+
+    private CollisionFlags m_CollisionFlags;
 
     Vector3 Movement;
 	
@@ -31,56 +36,73 @@ public class PlayerController : MonoBehaviour {
         info = gameObject.GetComponent<PlayerInfo>();
         analiser = gameObject.GetComponent<LevelAnaliser>(); 
         Movement = Vector3.zero;
+        m_Jumping = false;
 
-        jumpStartVelocity = Mathf.Sqrt(2 * Gravity * info.jumpHeight);
+        jumpStartVelocity = Mathf.Sqrt(2 * Gravity*Physics.gravity.magnitude * info.jumpHeight);
 	}
 
     float passedTime = 0F;
 	
+    void Update(){
+		if (!m_Jump)
+		{
+            m_Jump = Input.GetKeyDown(KeyCode.Space);
+		}
+
+
+        m_PreviouslyGrounded = trigger.triggered;
+    }
+
     public void Move (PlayerInput input) {
         passedTime += Time.deltaTime;
         if (passedTime < info.notWorkingTime)
             return;
-        //Head
-        controller.Move(Vector3.zero);
+        
         isgrounded = trigger.triggered;
 
-        if(!isgrounded || Movement.y > 0){
-            Movement.y -= Gravity * Time.fixedDeltaTime;
+		Vector3 desiredMove = transform.forward * input.forward * info.walkSpeed +
+							   transform.right * input.right * info.walkSpeed;
+
+		RaycastHit hitInfo;
+        Physics.SphereCast(transform.position, controller.radius, Vector3.down, out hitInfo,
+                           controller.height / 2f, Physics.AllLayers, QueryTriggerInteraction.Ignore);
+		desiredMove = Vector3.ProjectOnPlane(desiredMove, hitInfo.normal).normalized;
+
+        Movement.x = desiredMove.x * info.walkSpeed;
+        Movement.z = desiredMove.z * info.walkSpeed;
+        //Movement.y += desiredMove.y * info.walkSpeed;
+
+        if(isgrounded ){
+            
+             Movement.y = m_StickToGroundForce;
+			if (m_Jump)
+            {
+                Movement.y = jumpStartVelocity;
+				m_Jump = false;
+				m_Jumping = true;
+			}
+
         }else{
-            Movement.y = 0;
+            Movement += Physics.gravity * Gravity * Time.fixedDeltaTime;
         }
 
-        if(isgrounded && Input.GetKeyDown(KeyCode.Space)){
-            Movement.y = jumpStartVelocity;
-        }
 
-        rotationX += input.mouseX * info.sensitivityX;
-        rotationY += input.mouseY * info.sensitivityY;
+        m_CollisionFlags = controller.Move(Movement * Time.fixedDeltaTime);
+
+
+
+        //Head rotation
+		rotationX += input.mouseX * info.sensitivityX;
+		rotationY += input.mouseY * info.sensitivityY;
 		rotationY = Mathf.Clamp(rotationY, info.minimumY, info.maximumY);
 
 		transform.localEulerAngles = new Vector3(0, rotationX, 0);
 		CameraY.transform.localEulerAngles = new Vector3(-rotationY, 0, 0);
 
-
-		
-        Movement.Set(input.forward, Movement.y, input.right);
-
-        Plane cast = analiser.Cast();
-
-        Vector3 mov = transform.forward * input.forward * info.walkSpeed +
-                               transform.right * input.right * info.walkSpeed;
-        Vector3 mov1 = cast.Image(mov).normalized * mov.magnitude;
-
-        Vector3 movement =  mov1 +  transform.up * Movement.y;
-        movement *= Time.fixedDeltaTime;
-        controller.Move( movement);
-		
-
 	}
 	void OnCollisionEnter(Collision theCollision)
 	{
-		if (theCollision.gameObject.name == "floor")
+        if (theCollision.transform.tag != "Player")
 		{
 			isgrounded = true;
 		}
@@ -89,37 +111,26 @@ public class PlayerController : MonoBehaviour {
 	//consider when character is jumping .. it will exit collision.
 	void OnCollisionExit(Collision theCollision)
 	{
-		if (theCollision.gameObject.name == "floor")
+		if (theCollision.transform.tag != "Player")
 		{
 			isgrounded = false;
 		}
 	}
 
-    public float LengthToGround(){
-        Collider col = legCollider.GetComponent<Collider>();
-        Bounds bounds = col.bounds;
-        Vector3 min = bounds.min;
-        Vector3 max = bounds.max;
-        List<Vector3> points = new List<Vector3>();
+	private void OnControllerColliderHit(ControllerColliderHit hit)
+	{
+		Rigidbody body = hit.collider.attachedRigidbody;
+		//dont move the rigidbody if the character is on top of it
+		if (m_CollisionFlags == CollisionFlags.Below)
+		{
+			return;
+		}
 
-        points.Add(min);
-        points.Add(new Vector3(min.x,min.y,max.z));
-		points.Add(new Vector3(max.x, min.y, min.z));
-        points.Add(new Vector3(max.x, min.y, max.z));
-
-
-        float minLength = 1000;
-        foreach(Vector3 pnt in points){
-            Vector3 newPnt = pnt + Vector3.up * controller.skinWidth;
-            Ray ray = new Ray(newPnt, newPnt + Vector3.down * 1);
-            RaycastHit hit;
-            if(Physics.Raycast(ray.origin,ray.direction,out hit)){
-                minLength = Mathf.Min(minLength, hit.distance - controller.skinWidth );
-                //print(hit.transform.name);
-            }
-        }
-
-        return minLength;
-    }
+		if (body == null || body.isKinematic)
+		{
+			return;
+		}
+        body.AddForceAtPosition(controller.velocity * 0.1f, hit.point, ForceMode.Impulse);
+	}
 
 }
