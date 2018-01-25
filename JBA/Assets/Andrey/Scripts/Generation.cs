@@ -99,6 +99,15 @@ public class Generation : MonoBehaviour
                     {
                         possible_points.Remove(bt);
                     }
+                    if (points.IndexOf(bt) > -1)
+                    {
+                        GameObject instance_hall = Instantiate(Resources.Load("Hall_doors", typeof(GameObject))) as GameObject;
+                        instance_hall.transform.position = new Vector3(trash.x * 20 + vec.x * 10, 100, trash.y * 20 + vec.y * 10);
+                        if (vec.x == 0)
+                        {
+                            instance_hall.transform.Rotate(Vector3.up, 90, Space.World);
+                        }
+                    }
                 }
             }
             possible_points.Remove(trash);

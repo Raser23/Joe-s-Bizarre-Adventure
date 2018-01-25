@@ -2317,7 +2317,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   example: {fileID: 0}
-  number_of_rooms: 50
+  number_of_rooms: 20
   possible_points: []
   points: []
   trash: {x: 0, y: 0}
