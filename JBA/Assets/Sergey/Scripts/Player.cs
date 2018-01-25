@@ -11,7 +11,7 @@ public class Player : MonoBehaviour {
     PlayerController controller;
     Animator animator;
 
-    public bool isGrounded;
+    //public bool isGrounded;
 
     private bool needToStand;
     private bool seating;
@@ -50,7 +50,7 @@ public class Player : MonoBehaviour {
 				bool canDown = controller.CanStand(1,2);
 
 				if(canUp){
-                    print("here");
+                    //print("here");
 					animator.PlayInFixedTime("SeatDownStandUp");
                     needToStand = false;
                     seating = false;
@@ -73,7 +73,7 @@ public class Player : MonoBehaviour {
 				}
 				else if (canDown)
 				{
-                    print("here");
+                    //print("here");
 					animator.PlayInFixedTime("SeatUpStandDown");
 					needToStand = false;
 					seating = false;
@@ -117,7 +117,7 @@ public class Player : MonoBehaviour {
 		float Right = Input.GetAxisRaw("Horizontal");
 		float Forward = Input.GetAxisRaw("Vertical");
         PlayerInput input = new PlayerInput(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"),
-                                            Right, Forward);
+                                            Right, Forward,Input.GetKey(KeyCode.LeftShift));
 
         return input;
     }
@@ -126,11 +126,15 @@ public class Player : MonoBehaviour {
 public struct PlayerInput{
     public float mouseX, mouseY;
     public float right, forward;
-    public PlayerInput(float mX, float mY, float _right, float _forward){
+
+    public bool Shift;
+
+    public PlayerInput(float mX, float mY, float _right, float _forward, bool _shift){
         mouseX = mX;
         mouseY = mY;
         right = _right;
         forward = _forward;
+        Shift = _shift;
         
     }
     

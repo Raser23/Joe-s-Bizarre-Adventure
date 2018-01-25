@@ -62,22 +62,27 @@ public class PlayerController : MonoBehaviour {
     }
 
     public void Move (PlayerInput input) {
+        float speed = info.walkSpeed;
+
+        if (input.Shift )
+            speed *= 2;
+
         passedTime += Time.deltaTime;
         if (passedTime < info.notWorkingTime)
             return;
         
         isgrounded = trigger.triggered;
 
-		Vector3 desiredMove = transform.forward * input.forward * info.walkSpeed +
-							   transform.right * input.right * info.walkSpeed;
+		Vector3 desiredMove = transform.forward * input.forward  +
+							   transform.right * input.right ;
 
 		RaycastHit hitInfo;
         Physics.SphereCast(transform.position, controller.radius, Vector3.down, out hitInfo,
                            controller.height / 2f, Physics.AllLayers, QueryTriggerInteraction.Ignore);
 		desiredMove = Vector3.ProjectOnPlane(desiredMove, hitInfo.normal).normalized;
 
-        Movement.x = desiredMove.x * info.walkSpeed;
-        Movement.z = desiredMove.z * info.walkSpeed;
+        Movement.x = desiredMove.x * speed;
+        Movement.z = desiredMove.z * speed;
         //Movement.y += desiredMove.y * info.walkSpeed;
 
         if(isgrounded ){
@@ -116,7 +121,7 @@ public class PlayerController : MonoBehaviour {
 		}
 	}
 
-	//consider when character is jumping .. it will exit collision.
+	
 	void OnCollisionExit(Collision theCollision)
 	{
 		if (theCollision.transform.tag != "Player")
@@ -152,35 +157,7 @@ public class PlayerController : MonoBehaviour {
 		return true;
 	}
 
-    public bool CanStandUp(){
-        Vector3 pnt1 =transform.position + chControllerCenter + Vector3.down * (startHeight/2 - startRadius);
-        Vector3 pnt2 =transform.position + chControllerCenter + Vector3.up * (startHeight / 2 - startRadius);
 
-        Collider[] cols = Physics.OverlapCapsule(pnt1,pnt2,startRadius);
-        //print(cols.Length);
-        foreach(Collider col in cols){
-            if(col.tag != "Player"){
-                return false;
-            }
-        }
-        return true;
-	}
-	public bool CanStandDown()
-	{
-		Vector3 pnt2 = transform.position + chControllerCenter + Vector3.up * (startHeight / 2 - startRadius);
-		Vector3 pnt1 = pnt2 + Vector3.up * (startHeight - 2 * startRadius);
-
-		Collider[] cols = Physics.OverlapCapsule(pnt1, pnt2, startRadius);
-		//print(cols.Length);
-		foreach (Collider col in cols)
-		{
-			if (col.tag != "Player")
-			{
-				return false;
-			}
-		}
-		return true;
-	}
 
     private void OnDrawGizmos()
     {
