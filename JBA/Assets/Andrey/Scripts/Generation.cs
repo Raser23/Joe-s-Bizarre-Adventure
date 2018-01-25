@@ -18,25 +18,7 @@ public class Generation : MonoBehaviour
         possible_points.Add(trash);
         int sum_of_weight = 0;
         System.Random rnd = new System.Random();
-        /*     
-             Random rnd = new Random();
 
-             trash.x = 0;
-             trash.y = 1;
-             possible_points.Add(trash);
-
-             trash.x = 1;
-             trash.y = 0;
-             possible_points.Add(trash);
-
-             trash.x = 0;
-             trash.y = -1;
-             possible_points.Add(trash);
-
-             trash.x = -1;
-             trash.y = 0;
-             possible_points.Add(trash);
-             */
         sum_of_weight = Weight(Vector2.zero);
         while (number_of_rooms > 0)
         {
@@ -47,7 +29,7 @@ public class Generation : MonoBehaviour
             }
             sum_of_weight = jopa_govna;
             int a = rnd.Next(1, sum_of_weight);
-            //print(a.ToString() + ' ' + sum_of_weight.ToString() + ' ' + number_of_rooms.ToString());
+
             int counter = -1;
             while (a > 0)
             {
@@ -57,8 +39,35 @@ public class Generation : MonoBehaviour
             points.Add(possible_points[counter]);
             GameObject instance = Instantiate(Resources.Load("Room_template", typeof(GameObject))) as GameObject;
             trash = possible_points[counter];
-            instance.transform.position = new Vector3(trash.x*15, 100, trash.y*15);
-            
+            instance.transform.position = new Vector3(trash.x * 20, 100, trash.y * 20);
+            foreach (Transform child in instance.transform)
+            {
+                if (child.tag == "Marker")
+                {
+                    switch (child.name)
+                    {
+                        case "Wall_Position_Z+":
+                        
+                            break;
+                        case "Wall_Position_Z-":
+                             
+                            break;
+                        case "Wall_Position_Z-":
+
+                            break;
+                        case "Wall_Position_Z-":
+
+                            break;
+                        default:
+                            break;
+                    }
+                    GameObject instance_wall = Instantiate(Resources.Load("Wall_template", typeof(GameObject))) as GameObject;
+                    instance_wall.transform.position = child.transform.position;
+                    instance_wall.transform.rotation = child.transform.rotation;
+                    instance_wall.transform.parent = child;
+                }
+            }
+
             List<Vector2> n = new List<Vector2>() { new Vector2(1, 0), new Vector2(0, 1), new Vector2(-1, 0), new Vector2(0, -1) };
 
             foreach (Vector2 vec in n)
@@ -77,19 +86,16 @@ public class Generation : MonoBehaviour
                     if (near <= 1)
                     {
                         possible_points.Add(bt);
-                     //   sum_of_weight += Weight(bt);
                     }
                 }
                 else
                 {
                     if (possible_points.IndexOf(bt) > -1)
                     {
-                     //   sum_of_weight -= Weight(bt);
                         possible_points.Remove(bt);
                     }
                 }
             }
-         //   sum_of_weight -= Weight(possible_points[counter]);
             possible_points.Remove(trash);
             number_of_rooms--;
         }
@@ -103,6 +109,6 @@ public class Generation : MonoBehaviour
 
     int Weight(Vector2 a)
     {
-        return (int)(1000*number_of_rooms/(Mathf.Sqrt(a.x*a.x + a.y*a.y)+1));
+        return (int)(1000 * number_of_rooms / (Mathf.Sqrt(a.x * a.x + a.y * a.y) + 1));
     }
 }
