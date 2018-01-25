@@ -25,6 +25,9 @@ public class PlayerController : MonoBehaviour {
     private bool m_Jumping;
     private bool m_PreviouslyGrounded;
 
+    private float startHeight, startRadius;
+    private Vector3 chControllerCenter;
+
     public float jumpStartVelocity;
 
     private CollisionFlags m_CollisionFlags;
@@ -39,6 +42,11 @@ public class PlayerController : MonoBehaviour {
         m_Jumping = false;
 
         jumpStartVelocity = Mathf.Sqrt(2 * Gravity*Physics.gravity.magnitude * info.jumpHeight);
+
+        startHeight = controller.height;
+        startRadius = controller.radius;
+        chControllerCenter = controller.center;
+
 	}
 
     float passedTime = 0F;
@@ -117,7 +125,80 @@ public class PlayerController : MonoBehaviour {
 		}
 	}
 
-	private void OnControllerColliderHit(ControllerColliderHit hit)
+    public bool CanStand(int a,int b){
+        List<Vector3> pnts = new List<Vector3>();
+		Vector3 pnt1 = transform.position + chControllerCenter + Vector3.down * (startHeight / 2 - startRadius);
+		Vector3 pnt0 = pnt1 - Vector3.up * (startHeight - 2 * startRadius);
+		Vector3 pnt2 = transform.position + chControllerCenter + Vector3.up * (startHeight / 2 - startRadius);
+		Vector3 pnt3 = pnt2 + Vector3.up * (startHeight - 2 * startRadius);
+
+        pnts.Add(pnt0);
+        pnts.Add(pnt1);
+        pnts.Add(pnt2);
+        pnts.Add(pnt3);
+
+        Vector3 pntA = pnts[a];
+        Vector3 pntB = pnts[b];
+
+		Collider[] cols = Physics.OverlapCapsule(pntA, pntB, startRadius);
+		//print(cols.Length);
+		foreach (Collider col in cols)
+		{
+			if (col.tag != "Player")
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
+    public bool CanStandUp(){
+        Vector3 pnt1 =transform.position + chControllerCenter + Vector3.down * (startHeight/2 - startRadius);
+        Vector3 pnt2 =transform.position + chControllerCenter + Vector3.up * (startHeight / 2 - startRadius);
+
+        Collider[] cols = Physics.OverlapCapsule(pnt1,pnt2,startRadius);
+        //print(cols.Length);
+        foreach(Collider col in cols){
+            if(col.tag != "Player"){
+                return false;
+            }
+        }
+        return true;
+	}
+	public bool CanStandDown()
+	{
+		Vector3 pnt2 = transform.position + chControllerCenter + Vector3.up * (startHeight / 2 - startRadius);
+		Vector3 pnt1 = pnt2 + Vector3.up * (startHeight - 2 * startRadius);
+
+		Collider[] cols = Physics.OverlapCapsule(pnt1, pnt2, startRadius);
+		//print(cols.Length);
+		foreach (Collider col in cols)
+		{
+			if (col.tag != "Player")
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.green;
+		Vector3 pnt1 = transform.position + chControllerCenter + Vector3.down * (startHeight / 2 - startRadius);
+		Vector3 pnt0 = pnt1 - Vector3.up * (startHeight - 2 * startRadius);
+		Vector3 pnt2 = transform.position + chControllerCenter + Vector3.up * (startHeight / 2 - startRadius);
+        Vector3 pnt3 = pnt2 + Vector3.up * (startHeight - 2 * startRadius);
+
+        Gizmos.DrawSphere(pnt0,startRadius);
+		Gizmos.DrawSphere(pnt1,startRadius);
+		Gizmos.DrawSphere(pnt2, startRadius);
+		Gizmos.DrawSphere(pnt3, startRadius);
+
+
+	}
+
+    private void OnControllerColliderHit(ControllerColliderHit hit)
 	{
 		Rigidbody body = hit.collider.attachedRigidbody;
 		//dont move the rigidbody if the character is on top of it

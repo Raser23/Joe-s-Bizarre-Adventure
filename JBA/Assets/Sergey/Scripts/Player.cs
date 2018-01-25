@@ -6,9 +6,17 @@ using UnityEngine;
 
 public class Player : MonoBehaviour {
 
+    bool seatUp;
+
     PlayerController controller;
+    Animator animator;
 
     public bool isGrounded;
+
+    private bool needToStand;
+    private bool seating;
+
+
 
     private Vector3 Movement;
 
@@ -16,12 +24,87 @@ public class Player : MonoBehaviour {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         controller = gameObject.GetComponent<PlayerController>();
-
+        animator = gameObject.GetComponent<Animator>();
 	}
 	
 	void Update () {
-        
+        if(Input.GetKeyDown(KeyCode.C)){
+            Seat(); 
+            needToStand = false;
+            seating = true;
+        }
+		if (Input.GetKeyUp(KeyCode.C))
+		{
+            
+            needToStand = true;
+		}
+
+
+        if(needToStand){
+            //bool canUp = controller.CanStandUp();
+            //bool canDown = controller.CanStandDown();
+
+            if(!seatUp){//SeatDown
+
+				bool canUp = controller.CanStand(0,1);
+				bool canDown = controller.CanStand(1,2);
+
+				if(canUp){
+                    print("here");
+					animator.PlayInFixedTime("SeatDownStandUp");
+                    needToStand = false;
+                    seating = false;
+                }else if(canDown){
+                    animator.PlayInFixedTime("SeatDownStandDown");
+                    needToStand = false;
+                    seating = false;
+                }
+
+            }else{
+				bool canUp = controller.CanStand(1, 2);
+				bool canDown = controller.CanStand(2, 3);
+
+				if (canUp)
+				{
+					
+					animator.PlayInFixedTime("SeatUpStandUp");
+					needToStand = false;
+					seating = false;
+				}
+				else if (canDown)
+				{
+                    print("here");
+					animator.PlayInFixedTime("SeatUpStandDown");
+					needToStand = false;
+					seating = false;
+				}
+
+            }
+
+
+		}
+
 	}
+
+    void Seat(){
+
+        if(controller.isgrounded){
+            animator.PlayInFixedTime("SeatDown");
+            seatUp = false;
+        }else{
+            animator.PlayInFixedTime("SeatUp");
+            seatUp = true;
+        }
+    }
+
+    void StandUp(){
+        animator.PlayInFixedTime("StandUp");
+    }
+    void StandDown(){
+        animator.PlayInFixedTime("StandDown");
+    }
+
+
 
 	void FixedUpdate()
 	{
