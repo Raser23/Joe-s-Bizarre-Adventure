@@ -20,9 +20,40 @@ public class PlayerInfo : MonoBehaviour {
 
     public float jumpHeight;
 
-    public float accelerationP;
-    public float accelerationM;
+    public float accelerationUp;
+    public float accelerationUp_Air;
+    public float accelerationSlow;
+    public float accelerationSlow_Air;
 
     public int AdditionalJumps;
-	
+    //[eq
+
+    public float getCurrentAcceleration(float delta,bool isgrounded)
+	{
+		float acceleration;
+		if (delta > 0)
+		{
+			if (isgrounded)
+			{
+				acceleration = accelerationUp;
+			}
+			else
+			{
+                acceleration = accelerationUp_Air;
+			}
+		}
+		else
+		{
+			if (isgrounded)
+			{
+				acceleration = accelerationSlow;
+			}
+			else
+			{
+				acceleration = accelerationSlow_Air;
+			}
+		}
+
+		return acceleration;
+	}
 }
