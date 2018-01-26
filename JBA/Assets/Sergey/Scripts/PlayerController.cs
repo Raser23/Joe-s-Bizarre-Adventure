@@ -25,6 +25,7 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private bool m_Jumping;
     [SerializeField] private bool m_Falling;
     [SerializeField] private bool m_Running;
+
     private bool m_PreviouslyGrounded;
 
     private float startHeight, startRadius;
@@ -37,6 +38,8 @@ public class PlayerController : MonoBehaviour {
     private CollisionFlags m_CollisionFlags;
 
     Vector3 Movement;
+
+    public List<bool> additionalJumps;
 	
 	void Start () {
         controller = gameObject.GetComponent<CharacterController>();
@@ -52,15 +55,25 @@ public class PlayerController : MonoBehaviour {
         chControllerCenter = controller.center;
         prevSpeed = 0;
 
+        additionalJumps = new List<bool>();
+
 	}
 
     float passedTime = 0F;
 	
     void Update(){
-		if (!m_Jump)
+
+        bool space =  Input.GetKeyDown(KeyCode.Space);
+
+        if (m_Jumping && additionalJumps.Count < info.AdditionalJumps && space)
 		{
-            m_Jump = Input.GetKeyDown(KeyCode.Space);
+            additionalJumps.Add(space);
+        }else
+        if (!m_Jump)
+		{
+            m_Jump = space;
 		}
+
 
 
         m_PreviouslyGrounded = trigger.triggered;
@@ -77,6 +90,11 @@ public class PlayerController : MonoBehaviour {
 		desiredMove = Vector3.ProjectOnPlane(desiredMove, hitInfo.normal).normalized;
 
         isgrounded = trigger.triggered;
+
+        if(isgrounded){
+            additionalJumps.Clear();
+        }
+
         float speed = CurrentSpeed(input.Shift, new Vector3(desiredMove.x,0,desiredMove.z).magnitude != 0);
 
         passedTime += Time.deltaTime;
@@ -94,23 +112,29 @@ public class PlayerController : MonoBehaviour {
         if(isgrounded ){
             m_Jumping = false;
             Movement.y = m_StickToGroundForce;
-			if (m_Jump)
+
+
+            bool jump = m_Jump;
+
+
+            if (jump)
             {
-                Movement.y = jumpStartVelocity;
-				m_Jump = false;
-				m_Jumping = true;
+                Jump();
 			}
 
+
         }else{
+			if (additionalJumps.Count > 0 && additionalJumps[additionalJumps.Count - 1])
+			{
+				additionalJumps[additionalJumps.Count - 1] = false;
+                Jump();
+            }else
             Movement += Physics.gravity * Gravity * Time.fixedDeltaTime;
         }
 
 
         m_CollisionFlags = controller.Move(Movement * Time.fixedDeltaTime);
 
-
-
-        //Head rotation
 		rotationX += input.mouseX * info.sensitivityX;
 		rotationY += input.mouseY * info.sensitivityY;
 		rotationY = Mathf.Clamp(rotationY, info.minimumY, info.maximumY);
@@ -122,6 +146,11 @@ public class PlayerController : MonoBehaviour {
         m_Falling = !isgrounded && !m_Jumping;
 	}
 
+    void Jump(){
+		Movement.y = jumpStartVelocity;
+		m_Jump = false;
+		m_Jumping = true;
+    }
 
     [SerializeField]private bool prevShift;
   

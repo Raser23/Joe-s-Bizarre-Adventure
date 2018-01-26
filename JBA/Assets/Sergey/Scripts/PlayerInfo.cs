@@ -21,5 +21,7 @@ public class PlayerInfo : MonoBehaviour {
     public float jumpHeight;
 
     public float acceleration;
+
+    public int AdditionalJumps;
 	
 }

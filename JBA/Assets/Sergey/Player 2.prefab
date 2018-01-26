@@ -1104,6 +1104,7 @@ MonoBehaviour:
   m_Running: 0
   prevSpeed: 0
   jumpStartVelocity: 10
+  additionalJumps: 
   prevShift: 0
 --- !u!114 &114547695873129802
 MonoBehaviour:
@@ -1127,6 +1128,7 @@ MonoBehaviour:
   runSpeed: 20
   jumpHeight: 3
   acceleration: 30
+  AdditionalJumps: 10
 --- !u!114 &114687212963356186
 MonoBehaviour:
   m_ObjectHideFlags: 1
