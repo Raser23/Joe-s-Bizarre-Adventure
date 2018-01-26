@@ -1102,6 +1102,7 @@ MonoBehaviour:
   m_Jumping: 0
   m_Falling: 0
   m_Running: 0
+  Inertially: 1
   prevSpeed: 0
   jumpStartVelocity: 10
   additionalJumps: 
@@ -1127,7 +1128,8 @@ MonoBehaviour:
   walkSpeed: 10
   runSpeed: 20
   jumpHeight: 3
-  acceleration: 30
+  accelerationP: 30
+  accelerationM: 0
   AdditionalJumps: 0
 --- !u!114 &114687212963356186
 MonoBehaviour:

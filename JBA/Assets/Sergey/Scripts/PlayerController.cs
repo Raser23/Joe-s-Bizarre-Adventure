@@ -25,6 +25,9 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private bool m_Jumping;
     [SerializeField] private bool m_Falling;
     [SerializeField] private bool m_Running;
+    private Vector3 prevMovement;
+
+    public bool Inertially;
 
     private bool m_PreviouslyGrounded;
 
@@ -95,7 +98,13 @@ public class PlayerController : MonoBehaviour {
             additionalJumps.Clear();
         }
 
-        float speed = CurrentSpeed(input.Shift, new Vector3(desiredMove.x,0,desiredMove.z).magnitude != 0);
+        bool inputMoving = desiredMove.x != 0 || desiredMove.z!=0;
+        float speed = CurrentSpeed(input.Shift, inputMoving);
+
+        if(speed != 0 && !inputMoving){
+            desiredMove = prevMovement;
+        }
+
 
         passedTime += Time.deltaTime;
         if (passedTime < info.notWorkingTime)
@@ -142,7 +151,7 @@ public class PlayerController : MonoBehaviour {
 		transform.localEulerAngles = new Vector3(0, rotationX, 0);
 		CameraY.transform.localEulerAngles = new Vector3(-rotationY, 0, 0);
 
-
+        prevMovement = desiredMove;
         m_Falling = !isgrounded && !m_Jumping;
 	}
 
@@ -181,7 +190,16 @@ public class PlayerController : MonoBehaviour {
         float currentSpeed = prevSpeed;
 
         float delta = targetSpeed - currentSpeed;
-        float deltaSpeed = info.acceleration * Time.fixedDeltaTime;
+
+        float acceleration;
+
+        if(delta > 0){
+            acceleration = info.accelerationP;
+        }else{
+            acceleration = info.accelerationM;
+        }
+
+        float deltaSpeed = acceleration * Time.fixedDeltaTime;
 
         if (Mathf.Abs(delta) < Mathf.Abs(deltaSpeed))
         {
