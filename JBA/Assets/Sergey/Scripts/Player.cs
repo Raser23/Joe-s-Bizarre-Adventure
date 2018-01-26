@@ -28,63 +28,71 @@ public class Player : MonoBehaviour {
 	}
 	
 	void Update () {
-        if(Input.GetKeyDown(KeyCode.C)){
-            Seat(); 
-            needToStand = false;
-            seating = true;
-        }
+        Seating();
+
+	}
+    void Seating(){
+		if (Input.GetKeyDown(KeyCode.C))
+		{
+			Seat();
+			needToStand = false;
+			seating = true;
+		}
 		if (Input.GetKeyUp(KeyCode.C))
 		{
-            
-            needToStand = true;
+
+			needToStand = true;
 		}
 
 
-        if(needToStand){
-            //bool canUp = controller.CanStandUp();
-            //bool canDown = controller.CanStandDown();
+		if (needToStand)
+		{
+			if (!seatUp)
+			{//SeatDown
 
-            if(!seatUp){//SeatDown
+				bool canUp = controller.CanStand(0, 1);
+				bool canDown = controller.CanStand(1, 2);
 
-				bool canUp = controller.CanStand(0,1);
-				bool canDown = controller.CanStand(1,2);
-
-				if(canUp){
-                    //print("here");
+				if (canUp)
+				{
+					//print("here");
 					animator.PlayInFixedTime("SeatDownStandUp");
-                    needToStand = false;
-                    seating = false;
-                }else if(canDown){
-                    animator.PlayInFixedTime("SeatDownStandDown");
-                    needToStand = false;
-                    seating = false;
-                }
+					needToStand = false;
+					seating = false;
+				}
+				else if (canDown)
+				{
+					animator.PlayInFixedTime("SeatDownStandDown");
+					needToStand = false;
+					seating = false;
+				}
 
-            }else{
+			}
+			else
+			{
 				bool canUp = controller.CanStand(1, 2);
 				bool canDown = controller.CanStand(2, 3);
 
 				if (canUp)
 				{
-					
+
 					animator.PlayInFixedTime("SeatUpStandUp");
 					needToStand = false;
 					seating = false;
 				}
 				else if (canDown)
 				{
-                    //print("here");
+					//print("here");
 					animator.PlayInFixedTime("SeatUpStandDown");
 					needToStand = false;
 					seating = false;
 				}
 
-            }
+			}
 
 
 		}
-
-	}
+    }
 
     void Seat(){
 
@@ -96,14 +104,6 @@ public class Player : MonoBehaviour {
             seatUp = true;
         }
     }
-
-    void StandUp(){
-        animator.PlayInFixedTime("StandUp");
-    }
-    void StandDown(){
-        animator.PlayInFixedTime("StandDown");
-    }
-
 
 
 	void FixedUpdate()

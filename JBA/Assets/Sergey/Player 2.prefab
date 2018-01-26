@@ -1099,7 +1099,12 @@ MonoBehaviour:
   CameraY: {fileID: 1863788224121160}
   isgrounded: 0
   m_StickToGroundForce: -10
+  m_Jumping: 0
+  m_Falling: 0
+  m_Running: 0
+  prevSpeed: 0
   jumpStartVelocity: 10
+  prevShift: 0
 --- !u!114 &114547695873129802
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1119,7 +1124,9 @@ MonoBehaviour:
   maximumY: 60
   notWorkingTime: 0.4
   walkSpeed: 10
+  runSpeed: 20
   jumpHeight: 3
+  acceleration: 30
 --- !u!114 &114687212963356186
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1131,7 +1138,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71cbaf613d6f14a7da3fa8f10ecf805d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isGrounded: 0
 --- !u!124 &124577855238149530
 Behaviour:
   m_ObjectHideFlags: 1

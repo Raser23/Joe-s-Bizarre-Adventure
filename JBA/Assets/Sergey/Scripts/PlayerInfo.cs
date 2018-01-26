@@ -16,6 +16,10 @@ public class PlayerInfo : MonoBehaviour {
 
     public float walkSpeed;
 
+    public float runSpeed;
+
     public float jumpHeight;
+
+    public float acceleration;
 	
 }
