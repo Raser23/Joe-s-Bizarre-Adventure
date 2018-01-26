@@ -1128,8 +1128,10 @@ MonoBehaviour:
   walkSpeed: 10
   runSpeed: 20
   jumpHeight: 3
-  accelerationP: 30
-  accelerationM: 0
+  accelerationUp: 30
+  accelerationUp_Air: 30
+  accelerationSlow: 30
+  accelerationSlow_Air: 30
   AdditionalJumps: 0
 --- !u!114 &114687212963356186
 MonoBehaviour:

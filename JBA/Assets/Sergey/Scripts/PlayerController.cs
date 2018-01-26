@@ -191,13 +191,9 @@ public class PlayerController : MonoBehaviour {
 
         float delta = targetSpeed - currentSpeed;
 
-        float acceleration;
+        float acceleration = info.getCurrentAcceleration(delta,isgrounded);
 
-        if(delta > 0){
-            acceleration = info.accelerationP;
-        }else{
-            acceleration = info.accelerationM;
-        }
+
 
         float deltaSpeed = acceleration * Time.fixedDeltaTime;
 
@@ -219,6 +215,8 @@ public class PlayerController : MonoBehaviour {
         prevShift = shift;
         return currentSpeed;
     }
+
+
 
 
 	void OnCollisionEnter(Collision theCollision)
