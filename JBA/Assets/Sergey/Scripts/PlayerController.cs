@@ -85,14 +85,17 @@ public class PlayerController : MonoBehaviour {
 		Vector3 desiredMove = transform.forward * input.forward +
 							   transform.right * input.right;
 
-		RaycastHit hitInfo;
-		Physics.SphereCast(transform.position, controller.radius, Vector3.down, out hitInfo,
-						   controller.height / 2f, Physics.AllLayers, QueryTriggerInteraction.Ignore);
-		desiredMove = Vector3.ProjectOnPlane(desiredMove, hitInfo.normal).normalized;
-
+        isgrounded = trigger.triggered;
+        if (!isgrounded)
+        {
+            RaycastHit hitInfo;
+            Physics.SphereCast(transform.position, controller.radius, Vector3.down, out hitInfo,
+                               controller.height / 2f, Physics.AllLayers, QueryTriggerInteraction.Ignore);
+            desiredMove = Vector3.ProjectOnPlane(desiredMove, hitInfo.normal).normalized;
+        }
         //hitInfo.normal
 
-        isgrounded = trigger.triggered;
+
 
         if(isgrounded){
             additionalJumps.Clear();

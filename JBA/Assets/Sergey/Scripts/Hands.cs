@@ -9,9 +9,12 @@ public class Hands : MonoBehaviour {
 
     private Hand  handA,handB;
 
+    private List<Hand> hands;
     void Start(){
-        handA = new Hand(HandA);
-        handB = new Hand(HandB);
+        handA = new Hand(HandA,"1");
+        handB = new Hand(HandB,"2");
+
+        hands = new List<Hand>(){handA,handB};
     }
 
     private bool handsHided;
@@ -19,7 +22,22 @@ public class Hands : MonoBehaviour {
     Animator animator;
     public void HandsController(Animator _animator){
         animator = _animator;
-		if (HandsColliding())
+
+        for (int i = 0; i < hands.Count;i++)
+        {
+            Hand hand = hands[i];
+            if (hand.trigger.triggered)
+            {
+                //print(hand.hided);
+                if (!hand.hided)
+                {
+                    HideHand(hand);
+                }
+            }else if (hand.hided){
+                UnhideHand(hand);
+            }
+        }
+		/*if (HandsColliding())
 		{
             if(!handsHided){
                 HideHands();
@@ -27,16 +45,16 @@ public class Hands : MonoBehaviour {
 
         }else if (handsHided){
             UnhideHands();
-        }
+        }*/
     }
 
-    void HideHands(){
-        handsHided = true;
-        animator.PlayInFixedTime("HideHands");
+    void HideHand(Hand hand){
+        hand.Hide();
+        animator.PlayInFixedTime("HideHand"+hand.postfix);
     }
-    void UnhideHands(){
-        handsHided = false;
-        animator.PlayInFixedTime("UnhideHands");
+    void UnhideHand( Hand hand){
+        hand.Unhide();
+        animator.PlayInFixedTime("UnhideHand"+ hand.postfix);
         
     }
 
@@ -47,12 +65,26 @@ public class Hands : MonoBehaviour {
 }
 
 
-public struct Hand{
+public class Hand{
     public GameObject gameObject;
     public СubeTrigger trigger;
 
-    public Hand(GameObject hand){
-        gameObject = hand;
+    public bool hided;
+    public string postfix;
+
+    public void Hide(){
+        hided = true;
+    }
+	public void Unhide()
+	{
+        hided = false;
+	}
+
+
+	public Hand(GameObject hand,string st){
+        postfix = st;
+        Unhide();
+        this.gameObject = hand;
 
         GameObject copy = GameObject.Instantiate(hand);
         copy.transform.SetParent(hand.transform.parent);
