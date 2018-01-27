@@ -77,8 +77,6 @@ public class PlayerController : MonoBehaviour {
             m_Jump = space;
 		}
 
-
-
         m_PreviouslyGrounded = trigger.triggered;
     }
 
@@ -91,6 +89,8 @@ public class PlayerController : MonoBehaviour {
 		Physics.SphereCast(transform.position, controller.radius, Vector3.down, out hitInfo,
 						   controller.height / 2f, Physics.AllLayers, QueryTriggerInteraction.Ignore);
 		desiredMove = Vector3.ProjectOnPlane(desiredMove, hitInfo.normal).normalized;
+
+        //hitInfo.normal
 
         isgrounded = trigger.triggered;
 
@@ -110,9 +110,6 @@ public class PlayerController : MonoBehaviour {
         if (passedTime < info.notWorkingTime)
             return;
         
-
-
-		
 
         Movement.x = desiredMove.x * speed;
         Movement.z = desiredMove.z * speed;
