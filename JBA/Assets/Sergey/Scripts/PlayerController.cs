@@ -86,7 +86,7 @@ public class PlayerController : MonoBehaviour {
 							   transform.right * input.right;
 
         isgrounded = trigger.triggered;
-        if (!isgrounded)
+        if (isgrounded)
         {
             RaycastHit hitInfo;
             Physics.SphereCast(transform.position, controller.radius, Vector3.down, out hitInfo,
@@ -255,7 +255,7 @@ public class PlayerController : MonoBehaviour {
 		//print(cols.Length);
 		foreach (Collider col in cols)
 		{
-			if (col.tag != "Player")
+            if (col.tag != "Player"&& !col.isTrigger)
 			{
 				return false;
 			}

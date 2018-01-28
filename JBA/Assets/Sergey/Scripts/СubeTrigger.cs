@@ -22,10 +22,8 @@ public class СubeTrigger : MonoBehaviour {
 
 	void OnTriggerEnter(Collider other)
 	{
-		if (other.tag != "Player")
-			//{
+		if (other.tag != "Player" && !other.isTrigger)
 			ins.Add(other);
-		//}
 
 
 	}
@@ -38,7 +36,7 @@ public class СubeTrigger : MonoBehaviour {
 	}
 	void OnTriggerExit(Collider other)
 	{
-		if (other.tag != "Player")
+		if (other.tag != "Player"&& !other.isTrigger)
 			//{
 			ins.Remove(other);
 		//}
