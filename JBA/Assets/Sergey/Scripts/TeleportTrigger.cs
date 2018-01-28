@@ -54,5 +54,7 @@ public class TeleportTrigger : MonoBehaviour {
 
         return result;
     }
+
+   
 }
 public enum Types { OnlyPlayer, ByLayer, ListOfTags };

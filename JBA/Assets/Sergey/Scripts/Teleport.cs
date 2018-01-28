@@ -37,5 +37,9 @@ public class Teleport : MonoBehaviour {
             passedTime = 0;
         }
     }
-
+	private void OnDrawGizmos()
+	{
+		Gizmos.color = Color.green;
+        Gizmos.DrawLine(transform.position,teleportTo.transform.position);
+	}
 }
