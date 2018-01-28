@@ -142,7 +142,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   example: {fileID: 0}
   chance_of_big: 5
-  max_number_of_big: 10
+  dist_big: 50
+  max_number_of_big: 3
   number_of_rooms: 30
   number_of_rooms_start: 0
   possible_points: []

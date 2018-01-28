@@ -5,16 +5,18 @@ using System;
 
 public class Generation : MonoBehaviour
 {
-    enum Room_type { Regular, Golden, Boss, Big };
+    enum Room_type { Regular, Golden, Boss, Big, Start, Portal };
     public struct Room
     {
         public Vector2 position;
         public GameObject obj;
         public string type;
     }
+    public Dictionary<string, bool> type_exist = new Dictionary<string, bool>(); 
     public GameObject example;
-    public int chance_of_big = 10;
-    public int max_number_of_big;
+    public int chance_of_big = 20;
+    public int dist_big = 20;
+    public int max_number_of_big = 3;
     public int number_of_rooms = 50;
     public int number_of_rooms_start;
     public List<Vector2> possible_points = new List<Vector2>();
@@ -25,8 +27,13 @@ public class Generation : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        type_exist.Add("Regular", false);
+        type_exist.Add("Big", false);
+        type_exist.Add("Boss", false);
+        type_exist.Add("Golden", false);
+        type_exist.Add("Start", true);
+        type_exist.Add("Portal", false);
         number_of_rooms_start = number_of_rooms;
-        max_number_of_big = 3;
         trash.x = 0;
         trash.y = 0;
         possible_points.Add(trash);
@@ -109,19 +116,25 @@ public class Generation : MonoBehaviour
             {
                 trash_room.type = "Golden";
                 instance = Instantiate(Resources.Load("Room_Golden_template", typeof(GameObject))) as GameObject;
+                type_exist["Golden"] = true;
             }
             if (number_of_rooms == 1)
             {
                 trash_room.type = "Boss";
                 instance = Instantiate(Resources.Load("Room_Boss_template", typeof(GameObject))) as GameObject;
+                type_exist["Boss"] = true;
             }
             if (trash_room.type == "Regular")
             {
                 int b = rnd.Next(1, chance_of_big + 1);
-                if ((number_of_rooms < number_of_rooms_start - 5) && (check_big_possibility(trash) != Vector2.zero) && (b <= max_number_of_big))
+                int c = rnd.Next(0, dist_big);
+                int d = Wave_distance(trash, "Big");
+                if ((number_of_rooms < number_of_rooms_start - 5) && (check_big_possibility(trash) != Vector2.zero) && (b <= max_number_of_big) && ( ( d*d >= c) || (!type_exist["Big"]) ) )
                 {
+                    type_exist["Big"] = true;
+
                     max_number_of_big--;
-                    chance_of_big += 10;
+                //    chance_of_big += change_chance_of_big;
                     Room trash_room_0_1, trash_room_1_0, trash_room_1_1, trash_room_0_0;
                     Add_Big = true;
                     Vector2 big_vec = check_big_possibility(trash);
@@ -138,7 +151,7 @@ public class Generation : MonoBehaviour
                     instance_0_1.transform.position = place(trash + new Vector2(0, big_vec.y));//new Vector3(trash.x * 20, 100, trash.y * 20 + big_vec.y * 20);
                     instance_1_1.transform.position = place(trash + new Vector2(big_vec.x, big_vec.y));//new Vector3(trash.x * 20 + big_vec.x * 20, 100, trash.y * 20 + big_vec.y * 20);
 
-                    instance_other.transform.position = place(trash + big_vec*0.5f);
+                    instance_other.transform.position = place(trash + big_vec * 0.5f);
                     instance_Big_Room.transform.position = place(trash + big_vec * 0.5f);//new Vector3(trash.x * 20 + big_vec.x * 10, 100, trash.y * 20 + big_vec.y * 10);
                     instance_0_0.transform.SetParent(instance_Big_Room.transform);
                     instance_0_1.transform.SetParent(instance_Big_Room.transform);
@@ -158,6 +171,21 @@ public class Generation : MonoBehaviour
                     trash_room_0_1.type = "Big";
                     trash_room_1_0.type = "Big";
                     trash_room_1_1.type = "Big";
+
+
+                    if (true)
+                    {
+                        connection.Add(new Vector2(points.IndexOf(trash_room_0_0.position), points.IndexOf(trash_room_0_1.position)));
+                        connection.Add(new Vector2(points.IndexOf(trash_room_0_0.position), points.IndexOf(trash_room_1_0.position)));
+                        connection.Add(new Vector2(points.IndexOf(trash_room_0_1.position), points.IndexOf(trash_room_0_0.position)));
+                        connection.Add(new Vector2(points.IndexOf(trash_room_1_0.position), points.IndexOf(trash_room_0_0.position)));
+
+                        connection.Add(new Vector2(points.IndexOf(trash_room_1_1.position), points.IndexOf(trash_room_0_1.position)));
+                        connection.Add(new Vector2(points.IndexOf(trash_room_1_1.position), points.IndexOf(trash_room_1_0.position)));
+                        connection.Add(new Vector2(points.IndexOf(trash_room_0_1.position), points.IndexOf(trash_room_1_1.position)));
+                        connection.Add(new Vector2(points.IndexOf(trash_room_1_0.position), points.IndexOf(trash_room_1_1.position)));
+                    }//connection add for big room edges
+
                     List<Room> Big_4 = new List<Room>() { trash_room_0_0, trash_room_0_1, trash_room_1_0, trash_room_1_1 };
                     foreach (Room r in Big_4)
                     {
@@ -170,11 +198,13 @@ public class Generation : MonoBehaviour
                 else
                 {
                     instance = Instantiate(Resources.Load("Room_template", typeof(GameObject))) as GameObject;
-                    chance_of_big -= 3;
-                    if (chance_of_big <= 1)
-                    {
-                        chance_of_big = 2;
-                    }
+                    type_exist["Regular"] = true;
+
+                 //   chance_of_big -= 2;
+                 //   if (chance_of_big <= 1)
+                 //   {
+                 //       chance_of_big = 2;
+                //    }
                 }
             }
             if (!Add_Big)
@@ -183,11 +213,16 @@ public class Generation : MonoBehaviour
                 trash_room.position = trash;
                 trash_room.obj = instance;
 
+                if (number_of_rooms == number_of_rooms_start)
+                {
+                    trash_room.type = "Start";
+                }
+
                 points.Add(trash);
                 rooms.Add(trash_room);
 
                 List<Vector2> n = new List<Vector2>() { new Vector2(1, 0), new Vector2(0, 1), new Vector2(-1, 0), new Vector2(0, -1) };
-                if (trash_room.type == "Regular")
+                if ((trash_room.type == "Regular") || (trash_room.type == "Start"))
                 {
                     Add_possible(trash);
                 }
@@ -394,7 +429,149 @@ public class Generation : MonoBehaviour
             }
         }
     }
-    
+
+
+    bool Exist_check(string type_q)
+    {
+        return type_exist[type_q];
+    }
+
+    int Wave_distance(Vector2 start, Vector2 finish)
+    {
+        if (points.IndexOf(finish) == -1)
+        {
+            return -1;
+        }
+
+        bool crutch = false;
+
+        if (points.IndexOf(start) == -1)
+        {
+            points.Add(start);
+            crutch = true;
+        }
+
+        List<Vector2> n = new List<Vector2>() { new Vector2(1, 0), new Vector2(-1, 0), new Vector2(0, -1), new Vector2(0, 1) };
+
+        List<Vector2> was = new List<Vector2>();
+        List<Vector2> step = new List<Vector2>();
+        List<Vector2> next_step = new List<Vector2>();
+        step.Add(start);
+        int distance = 0;
+        while (true)
+        {
+            if (step.Capacity == 0)
+            {
+                distance = -1;
+                if (crutch)
+                {
+                    points.Remove(start);
+                }
+                return distance;
+            }
+            foreach(Vector2 point in step)
+            {
+                if (point == finish)
+                {
+                    if (crutch)
+                    {
+                        points.Remove(start);
+                    }
+                    return distance;
+                }
+                foreach(Vector2 v in n)
+                {
+                    if ((connection.IndexOf(new Vector2(points.IndexOf(point), points.IndexOf(point+v)) ) > -1) && (was.IndexOf(point+v) == -1))
+                    {
+                        if (next_step.IndexOf(point + v) == -1)
+                        {
+                            next_step.Add(point + v);
+                        }
+                    }
+                }
+                was.Add(point);
+            }
+            foreach (Vector2 t in was)
+            {
+                step.Remove(t);
+            }
+            distance++;
+        }
+    }
+
+    int Wave_distance(Vector2 start, String finish_type)
+    {
+        if (!Exist_check(finish_type))
+        {
+            return -1;
+        }
+
+        bool crutch = false;
+
+        Room cr;
+        cr.position = start;
+        cr.type = "Gay";
+        cr.obj = this.gameObject;//very bad (type and obj is not important)
+
+        if (points.IndexOf(start) == -1)
+        {
+            points.Add(start);
+            rooms.Add(cr);
+            crutch = true;
+        }
+
+        List<Vector2> n = new List<Vector2>() { new Vector2(1, 0), new Vector2(-1, 0), new Vector2(0, -1), new Vector2(0, 1) };
+
+        List<Vector2> was = new List<Vector2>();
+        List<Vector2> step = new List<Vector2>();
+        
+        step.Add(start);
+        int distance = 0;
+        while (true)
+        {
+            List<Vector2> next_step = new List<Vector2>();
+            if (step.Capacity == 0)
+            {
+                distance = -1;
+                if (crutch)
+                {
+                    points.Remove(start);
+                    rooms.Remove(cr);
+                }
+                return distance;
+            }
+            foreach (Vector2 point in step)
+            {
+                if (rooms[points.IndexOf(point)].type == finish_type)
+                {
+                    print(rooms[points.IndexOf(point)].type.ToString() + ' ' + distance.ToString());
+                    if (crutch)
+                    {
+                        points.Remove(start);
+                        rooms.Remove(cr);
+                    }
+                    return distance;
+                }
+                foreach (Vector2 v in n)
+                {
+                    if ((connection.IndexOf(new Vector2(points.IndexOf(point), points.IndexOf(point + v))) > -1) && (was.IndexOf(point + v) == -1))
+                    {
+                        if (next_step.IndexOf(point + v) == -1)
+                        {
+                            next_step.Add(point + v);
+                        }
+                    }
+                }
+                was.Add(point);
+            }
+            step = next_step;
+            distance++;
+        }
+
+    }
+
+
+
     Vector3 place (Vector2 a)
     {
         return new Vector3(a.x * 20, 0, a.y * 20);
