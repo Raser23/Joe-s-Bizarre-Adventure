@@ -77,8 +77,6 @@ public class PlayerController : MonoBehaviour {
             m_Jump = space;
 		}
 
-
-
         m_PreviouslyGrounded = trigger.triggered;
     }
 
@@ -87,12 +85,17 @@ public class PlayerController : MonoBehaviour {
 		Vector3 desiredMove = transform.forward * input.forward +
 							   transform.right * input.right;
 
-		RaycastHit hitInfo;
-		Physics.SphereCast(transform.position, controller.radius, Vector3.down, out hitInfo,
-						   controller.height / 2f, Physics.AllLayers, QueryTriggerInteraction.Ignore);
-		desiredMove = Vector3.ProjectOnPlane(desiredMove, hitInfo.normal).normalized;
-
         isgrounded = trigger.triggered;
+        if (isgrounded)
+        {
+            RaycastHit hitInfo;
+            Physics.SphereCast(transform.position, controller.radius, Vector3.down, out hitInfo,
+                               controller.height / 2f, Physics.AllLayers, QueryTriggerInteraction.Ignore);
+            desiredMove = Vector3.ProjectOnPlane(desiredMove, hitInfo.normal).normalized;
+        }
+        //hitInfo.normal
+
+
 
         if(isgrounded){
             additionalJumps.Clear();
@@ -110,9 +113,6 @@ public class PlayerController : MonoBehaviour {
         if (passedTime < info.notWorkingTime)
             return;
         
-
-
-		
 
         Movement.x = desiredMove.x * speed;
         Movement.z = desiredMove.z * speed;
@@ -255,7 +255,7 @@ public class PlayerController : MonoBehaviour {
 		//print(cols.Length);
 		foreach (Collider col in cols)
 		{
-			if (col.tag != "Player")
+            if (col.tag != "Player"&& !col.isTrigger)
 			{
 				return false;
 			}

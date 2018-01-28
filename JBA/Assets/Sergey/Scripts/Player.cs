@@ -10,6 +10,7 @@ public class Player : MonoBehaviour {
 
     PlayerController controller;
     Animator animator;
+    public Hands hands;
 
     //public bool isGrounded;
 
@@ -30,6 +31,10 @@ public class Player : MonoBehaviour {
 	void Update () {
         Seating();
 
+        hands.HandsController(animator);
+
+
+
 	}
     void Seating(){
 		if (Input.GetKeyDown(KeyCode.C))
@@ -43,7 +48,6 @@ public class Player : MonoBehaviour {
 
 			needToStand = true;
 		}
-
 
 		if (needToStand)
 		{
@@ -66,7 +70,6 @@ public class Player : MonoBehaviour {
 					needToStand = false;
 					seating = false;
 				}
-
 			}
 			else
 			{
