@@ -19,8 +19,10 @@ public class Generation : MonoBehaviour
     public int max_number_of_big = 3;
     public int number_of_rooms = 50;
     public int number_of_rooms_start;
+    public int portal_distance = 3;
     public List<Vector2> possible_points = new List<Vector2>();
     public List<Vector2> points = new List<Vector2>();
+    public List<Vector2> portals = new List<Vector2>();
     public List<Room> rooms = new List<Room>();
     public List<Vector2> connection = new List<Vector2>();//better use pair, but idk how
     public Vector2 trash;
@@ -173,6 +175,15 @@ public class Generation : MonoBehaviour
                     trash_room_1_1.type = "Big";
 
 
+                    List<Room> Big_4 = new List<Room>() { trash_room_0_0, trash_room_0_1, trash_room_1_0, trash_room_1_1 };
+                    foreach (Room r in Big_4)
+                    {
+                        rooms.Add(r);
+                        points.Add(r.position);
+                        possible_points.Remove(r.position);
+                        Add_possible(r.position);
+                    }
+
                     if (true)
                     {
                         connection.Add(new Vector2(points.IndexOf(trash_room_0_0.position), points.IndexOf(trash_room_0_1.position)));
@@ -186,14 +197,6 @@ public class Generation : MonoBehaviour
                         connection.Add(new Vector2(points.IndexOf(trash_room_1_0.position), points.IndexOf(trash_room_1_1.position)));
                     }//connection add for big room edges
 
-                    List<Room> Big_4 = new List<Room>() { trash_room_0_0, trash_room_0_1, trash_room_1_0, trash_room_1_1 };
-                    foreach (Room r in Big_4)
-                    {
-                        rooms.Add(r);
-                        points.Add(r.position);
-                        possible_points.Remove(r.position);
-                        Add_possible(r.position);
-                    }
                 }
                 else
                 {
@@ -245,13 +248,130 @@ public class Generation : MonoBehaviour
             number_of_rooms--;
         }
         Wall_generation();
+        int hui = 0;
+        foreach (Vector2 p in portals)
+        {
+            Room h = rooms[points.IndexOf(p)];
+            h.type = "Portal";
+            rooms[points.IndexOf(p)] = h;
+            print(rooms[points.IndexOf(p)].type);
+            hui++;
+        }
+        while (hui > 0)
+        {
+            List<Vector2> del = Wave_Steps(portals[0], 5, "Portal");
+            GameObject cube = Instantiate(Resources.Load("Cube", typeof(GameObject))) as GameObject;
+            cube.transform.position = place(portals[0]);
+            foreach (Vector2 a in del)
+            {
+                print(a);
+                Room h = rooms[points.IndexOf(a)];
+                h.type = "Regular";
+                rooms[points.IndexOf(a)] = h;
+                if (portals.Remove(a))
+                {
+                    hui--;
+                }
+            }
+            portals.RemoveAt(0);
+            hui--;
+        }
     }
+
+
+    ////////////////////////////////////////////////////////////////////////////////////// 
+    //////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////
+
 
     // Update is called once per frame
     void Update()
     {
 
     }
+
+    List<Vector2> Wave_Steps (Vector2 start, int number_of_steps, String type_s)
+    {
+        List<Vector2> answer = new List<Vector2>();
+
+        if (!Exist_check(type_s))
+        {
+            return answer;
+        }
+
+        bool crutch = false;
+
+        Room cr;
+        cr.position = start;
+        cr.type = "Gay";
+        cr.obj = this.gameObject;//very bad (type and obj is not important)
+
+        if (points.IndexOf(start) == -1)
+        {
+            points.Add(start);
+            rooms.Add(cr);
+            crutch = true;
+        }
+
+        List<Vector2> n = new List<Vector2>() { new Vector2(1, 0), new Vector2(-1, 0), new Vector2(0, -1), new Vector2(0, 1) };
+
+        List<Vector2> was = new List<Vector2>();
+        List<Vector2> step = new List<Vector2>();
+
+        step.Add(start);
+        int distance = 0;
+        while (true)
+        {
+            List<Vector2> next_step = new List<Vector2>();
+            if (step.Capacity == 0)
+            {
+                if (crutch)
+                {
+                    points.Remove(start);
+                    rooms.Remove(cr);
+                }
+                if (answer.IndexOf(start) > -1)
+                {
+                    answer.Remove(start);
+                }
+                return answer;
+            }
+            foreach (Vector2 point in step)
+            {
+                if (rooms[points.IndexOf(point)].type == type_s)
+                {
+                    answer.Add(point);
+                }
+                foreach (Vector2 v in n)
+                {
+                    if ((connection.IndexOf(new Vector2(points.IndexOf(point), points.IndexOf(point + v))) > -1) && (was.IndexOf(point + v) == -1))
+                    {
+                        if (next_step.IndexOf(point + v) == -1)
+                        {
+                            next_step.Add(point + v);
+                        }
+                    }
+                }
+                was.Add(point);
+            }
+            step = next_step;
+            if (distance >= number_of_steps)
+            {
+                if (crutch)
+                {
+                    points.Remove(start);
+                    rooms.Remove(cr);
+                }
+                if (answer.IndexOf(start) > -1)
+                {
+                    answer.Remove(start);
+                }
+                return answer;
+            }
+            distance++;
+        }
+    }
+
 
     void Add_possible(Vector2 a)
     {
@@ -338,10 +458,11 @@ public class Generation : MonoBehaviour
     }
 
 
-    void Wall_generation()
+    void Wall_generation()//find leaves
     {
         foreach (Room room in rooms)
         {
+            int close = 0;
             string rt = "";
             switch (room.type)
             {
@@ -369,6 +490,7 @@ public class Generation : MonoBehaviour
                         if ((points.IndexOf(room.position + vec) > -1) && (connection.IndexOf(new Vector2(points.IndexOf(room.position + vec), points.IndexOf(room.position))) > -1))
                         {
                             instance_wall = Instantiate(Resources.Load("Wall_Door" + rt + "_template", typeof(GameObject))) as GameObject;
+                            close++;
                         }
                         else
                         {
@@ -384,6 +506,7 @@ public class Generation : MonoBehaviour
                             if ((points.IndexOf(room.position + vec) > -1) && (connection.IndexOf(new Vector2(points.IndexOf(room.position + vec), points.IndexOf(room.position))) > -1))
                             {
                                 instance_wall = Instantiate(Resources.Load("Wall_Door" + rt + "_template", typeof(GameObject))) as GameObject;
+                                close++;
                             }
                             else
                             {
@@ -399,6 +522,7 @@ public class Generation : MonoBehaviour
                             if ((points.IndexOf(room.position + vec) > -1) && (connection.IndexOf(new Vector2(points.IndexOf(room.position + vec), points.IndexOf(room.position))) > -1))
                             {
                                 instance_wall = Instantiate(Resources.Load("Wall_Door" + rt + "_template", typeof(GameObject))) as GameObject;
+                                close++;
                             }
                             else
                             {
@@ -414,6 +538,7 @@ public class Generation : MonoBehaviour
                             if ((points.IndexOf(room.position + vec) > -1) && (connection.IndexOf(new Vector2(points.IndexOf(room.position + vec), points.IndexOf(room.position))) > -1))
                             {
                                 instance_wall = Instantiate(Resources.Load("Wall_Door" + rt + "_template", typeof(GameObject))) as GameObject;
+                                close++;
                             }
                             else
                             {
@@ -426,6 +551,11 @@ public class Generation : MonoBehaviour
                     default:
                         break;
                 }
+            }
+            if ((room.type == "Regular") && (close == 1) && (Wave_distance(room.position, "Start") > portal_distance))
+            {
+                portals.Add(room.position);
+                type_exist["Portal"] = true;
             }
         }
     }
@@ -544,7 +674,6 @@ public class Generation : MonoBehaviour
             {
                 if (rooms[points.IndexOf(point)].type == finish_type)
                 {
-                    print(rooms[points.IndexOf(point)].type.ToString() + ' ' + distance.ToString());
                     if (crutch)
                     {
                         points.Remove(start);
