@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerInfo : MonoBehaviour {
+
+    public int MaxHp;
+    private int currentHp;
+
+
 	public float sensitivityX = 15F;
 	public float sensitivityY = 15F;
 

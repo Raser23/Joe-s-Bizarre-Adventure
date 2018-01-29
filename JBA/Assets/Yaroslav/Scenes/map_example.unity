@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.37311947, g: 0.38074005, b: 0.35872722, a: 1}
+  m_IndirectSpecularColor: {r: 0.37311918, g: 0.38073993, b: 0.358727, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -632,6 +632,48 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: b4edd01f48ad7ab4d8d1f4bc08d7a3b6, type: 2}
   m_IsPrefabParent: 0
+--- !u!1001 &207014727
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4701880608461444, guid: 92c98ff609f4a44248b7c9d10d7317b1, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 51.315025
+      objectReference: {fileID: 0}
+    - target: {fileID: 4701880608461444, guid: 92c98ff609f4a44248b7c9d10d7317b1, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: -44.761604
+      objectReference: {fileID: 0}
+    - target: {fileID: 4701880608461444, guid: 92c98ff609f4a44248b7c9d10d7317b1, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: -9.897169
+      objectReference: {fileID: 0}
+    - target: {fileID: 4701880608461444, guid: 92c98ff609f4a44248b7c9d10d7317b1, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4701880608461444, guid: 92c98ff609f4a44248b7c9d10d7317b1, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4701880608461444, guid: 92c98ff609f4a44248b7c9d10d7317b1, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4701880608461444, guid: 92c98ff609f4a44248b7c9d10d7317b1, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4701880608461444, guid: 92c98ff609f4a44248b7c9d10d7317b1, type: 2}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: 92c98ff609f4a44248b7c9d10d7317b1, type: 2}
+  m_IsPrefabParent: 0
 --- !u!1 &217992034
 GameObject:
   m_ObjectHideFlags: 0
@@ -964,12 +1006,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player_pos: {x: 0, y: 0, z: 0}
   delta_rot: {x: 0, y: 0, z: 0}
+  beam_end: {x: 0, y: 0, z: 0}
   player: {fileID: 1296076552}
   charge: {fileID: 1042539872}
   time_in_status: 0
   charging_time: 10
   firing_time: 0
   status: 2
+  beam: {fileID: 0}
   head:
     rot_speed: 1
     look_dir: {x: 0, y: 0, z: 0}
