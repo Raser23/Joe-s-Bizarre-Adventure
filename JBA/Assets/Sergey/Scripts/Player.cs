@@ -10,6 +10,7 @@ public class Player : MonoBehaviour {
 
     PlayerController controller;
     Animator animator;
+    GunController gunController;
     public Hands hands;
 
     //public bool isGrounded;
@@ -22,10 +23,16 @@ public class Player : MonoBehaviour {
     private Vector3 Movement;
 
 	void Start () {
+        print("Player start");
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         controller = gameObject.GetComponent<PlayerController>();
         animator = gameObject.GetComponent<Animator>();
+        gunController = gameObject.GetComponent<GunController>();
+
+        gunController.hands = hands;
+
+
 	}
 	
 	void Update () {

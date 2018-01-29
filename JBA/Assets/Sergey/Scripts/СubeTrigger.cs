@@ -18,7 +18,6 @@ public class СubeTrigger : MonoBehaviour {
 	void Start()
 	{
 		ins = new List<Collider>();
-        print("hui");
 	}
 
 	void OnTriggerEnter(Collider other)

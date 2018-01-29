@@ -40,6 +40,7 @@ GameObject:
   - component: {fileID: 143996358295549938}
   - component: {fileID: 54358363843059966}
   - component: {fileID: 95070139756068510}
+  - component: {fileID: 114480055441386442}
   m_Layer: 8
   m_Name: Player 2
   m_TagString: Player
@@ -107,7 +108,7 @@ GameObject:
   - component: {fileID: 33129544888851070}
   - component: {fileID: 23917986824721504}
   m_Layer: 0
-  m_Name: Hand1
+  m_Name: HandL
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -246,7 +247,7 @@ GameObject:
   - component: {fileID: 33403070224594958}
   - component: {fileID: 23289987959117016}
   m_Layer: 0
-  m_Name: Hand2
+  m_Name: HandR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1366,6 +1367,20 @@ MonoBehaviour:
   jumpStartVelocity: 10
   additionalJumps: 
   prevShift: 0
+--- !u!114 &114480055441386442
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1106355399740620}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aac01f2b818974d7aa3ed6ee7c24bc4e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hands: {fileID: 0}
+  currentGun: {fileID: 0}
+  backpackGun: {fileID: 0}
 --- !u!114 &114547695873129802
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1377,7 +1392,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6547d72bcd9ce4de4b88ef9e2d267d32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxHp: 100
+  MaxHp: 30
   sensitivityX: 2
   sensitivityY: 2
   minimumX: -360
@@ -1416,10 +1431,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6684602f8ddb247138a04f54702f3335, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HandA: {fileID: 1338815125748872}
-  HandB: {fileID: 1733365209270502}
-  guns:
-  - {fileID: 0}
+  HandL: {fileID: 1338815125748872}
+  HandR: {fileID: 1733365209270502}
 --- !u!124 &124577855238149530
 Behaviour:
   m_ObjectHideFlags: 1

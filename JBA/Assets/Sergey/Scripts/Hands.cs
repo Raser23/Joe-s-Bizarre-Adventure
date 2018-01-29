@@ -4,35 +4,27 @@ using UnityEngine;
 
 public class Hands : MonoBehaviour {
 
-    public GameObject HandA;
-    public GameObject HandB;
+    public GameObject HandL;
+    public GameObject HandR;
 
     private Hand  handA,handB;
 
     private List<Hand> hands;
 
-    public List<GameObject> guns;
+
     void Awake(){
-        handA = new Hand(HandA,"1");
-        handB = new Hand(HandB,"2");
+        handA = new Hand(HandL,"L");
+        handB = new Hand(HandR,"R");
         hands = new List<Hand>(){handA,handB};
 
-        PutCurrentGun();
+       
     }
 
     private bool handsHided;
 
     Animator animator;
 
-    void PutCurrentGun(){
-        GameObject currentGun = guns[0];
-        currentGun.transform.SetParent(handB.gameObject.transform);
-        currentGun.transform.localPosition = Vector3.zero;
-        currentGun.transform.localEulerAngles = Vector3.zero;
 
-
-
-	}
 
     public void HandsController(Animator _animator){
         animator = _animator;
