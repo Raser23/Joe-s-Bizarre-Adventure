@@ -703,7 +703,7 @@ public class Generation : MonoBehaviour
 
     Vector3 place (Vector2 a)
     {
-        return new Vector3(a.x * 20, 0, a.y * 20);
+        return new Vector3(a.x * 120, 0, a.y * 120);
     }
 
     int Weight(Vector2 a)
