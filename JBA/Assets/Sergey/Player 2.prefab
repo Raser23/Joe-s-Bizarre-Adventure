@@ -245,7 +245,6 @@ GameObject:
   - component: {fileID: 4509722922375806}
   - component: {fileID: 33403070224594958}
   - component: {fileID: 23289987959117016}
-  - component: {fileID: 65214742987880890}
   m_Layer: 0
   m_Name: Hand2
   m_TagString: Untagged
@@ -417,7 +416,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1106355399740620}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 11.454, z: 6.21}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4679657823646500}
@@ -1209,18 +1208,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!65 &65214742987880890
-BoxCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1733365209270502}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0.0000038146973, z: 0}
 --- !u!65 &65236343444714480
 BoxCollider:
   m_ObjectHideFlags: 1

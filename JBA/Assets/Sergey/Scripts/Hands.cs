@@ -10,7 +10,7 @@ public class Hands : MonoBehaviour {
     private Hand  handA,handB;
 
     private List<Hand> hands;
-    void Start(){
+    void Awake(){
         handA = new Hand(HandA,"1");
         handB = new Hand(HandB,"2");
 
@@ -96,6 +96,7 @@ public class Hand{
         BoxCollider coll = copy.AddComponent<BoxCollider>();
         coll.isTrigger = true;
         trigger = copy.AddComponent<СubeTrigger>();
+
     }
 
 }
