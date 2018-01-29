@@ -18,6 +18,7 @@ public class СubeTrigger : MonoBehaviour {
 	void Start()
 	{
 		ins = new List<Collider>();
+        print("hui");
 	}
 
 	void OnTriggerEnter(Collider other)
@@ -29,10 +30,7 @@ public class СubeTrigger : MonoBehaviour {
 	}
 	void OnTriggerStay(Collider other)
 	{
-		if (other.tag == "Floor")
-		{
-
-		}
+		
 	}
 	void OnTriggerExit(Collider other)
 	{
